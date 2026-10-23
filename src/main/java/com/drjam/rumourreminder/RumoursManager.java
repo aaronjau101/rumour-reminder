@@ -80,6 +80,30 @@ public class RumoursManager {
 
     public boolean isRumourCompleted = false;
 
+    private long lastActivityMillis = System.currentTimeMillis();
+    private boolean timedOut = false;
+
+    /** Call whenever the player does something that should keep the infobox alive. */
+    public void resetTimeout() {
+        lastActivityMillis = System.currentTimeMillis();
+        timedOut = false;
+    }
+
+    public void checkTimeout() {
+        int minutes = config.infoBoxTimeoutMinutes();
+        if (minutes <= 0 || timedOut || !isInfoBoxVisible()) {
+            return;
+        }
+        // Don't expire while a finished rumour is waiting to be handed in
+        if (isRumourCompleted) {
+            return;
+        }
+        if (System.currentTimeMillis() - lastActivityMillis > minutes * 60_000L) {
+            timedOut = true;
+            removeInfoBox();
+        }
+    }
+
     @Getter
     @Setter
     private RumourInfoBox infoBox;
@@ -209,6 +233,9 @@ public class RumoursManager {
 
     private void updateInfoBox() {
         removeInfoBox();
+        if (timedOut) {
+            return;
+        }
 
         if (activeRumour == null && rumourGilman == null && rumourAco == null && rumourCervus == null
                 && rumourOrnus == null && rumourTeco == null && rumourWolf == null) {
@@ -269,6 +296,7 @@ public class RumoursManager {
             return;
         }
 
+        resetTimeout();
         loadAllRumours();
         if (noActiveMacher.find()) {
             this.activeRumour = null;
@@ -312,6 +340,7 @@ public class RumoursManager {
             return;
         }
 
+        resetTimeout();
         loadAllRumours();
 
         var isRumourCompletion = hunterTalking != null && RUMOUR_COMPLETION_PATTERN.matcher(contents).find();
@@ -427,4 +456,11 @@ public class RumoursManager {
         updateInfoBox();
     }
 
+    @Nullable
+    public HunterCreature getActiveCreature() {
+        if (activeRumour == null) {
+            return null;
+        }
+        return HunterCreature.getHunterCreatureFromCreatureName(activeRumour);
+    }
 }

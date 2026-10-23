@@ -144,4 +144,19 @@ public enum HunterCreature {
         this.maxHit = maxHit;
         this.targetItemID = targetItemID;
     }
+
+    public boolean matchesNpcName(String npcName) {
+        if (npcName == null) {
+            return false;
+        }
+        String n = npcName.toLowerCase();
+        if (n.equals(this.name.toLowerCase())) {
+            return true;
+        }
+        // Rumour name differs from the NPC name in the world
+        if (this == CARNIVOROUS_CHINCHOMPA) {
+            return n.equals("carnivorous chinchompa");
+        }
+        return false;
+    }
 }

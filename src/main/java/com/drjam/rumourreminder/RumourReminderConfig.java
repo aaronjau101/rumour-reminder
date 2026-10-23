@@ -177,4 +177,64 @@ public interface RumourReminderConfig extends Config {
         return 16;
     }
 
+	@ConfigItem(
+			keyName = "highlightTargetCreature",
+			name = "Highlight Target Creature",
+			description = "Highlight the creature of your current rumour (e.g. Dark kebbit)",
+			position = 1
+	)
+	default boolean highlightTargetCreature() {
+		return true;
+	}
+
+	@ConfigSection(
+			name = "Target Creature Style",
+			description = "Style for the rumour target creature",
+			position = 4,
+			closedByDefault = true
+	)
+	String targetSection = "targetSection";
+
+	@ConfigItem(position = 0, keyName = "targetHull", name = "Highlight hull",
+			description = "Highlight the creature by hull", section = targetSection)
+	default boolean targetHull() { return false; }
+
+	@ConfigItem(position = 1, keyName = "targetTile", name = "Highlight tile",
+			description = "Highlight the creature's tile", section = targetSection)
+	default boolean targetTile() { return false; }
+
+	@ConfigItem(position = 2, keyName = "targetOutline", name = "Highlight outline",
+			description = "Highlight the creature's model by outline", section = targetSection)
+	default boolean targetOutline() { return true; }
+
+	@Alpha
+	@ConfigItem(position = 3, keyName = "targetColor", name = "Highlight Color",
+			description = "Color of the creature highlight", section = targetSection)
+	default Color targetColor() { return Color.CYAN; }
+
+	@Alpha
+	@ConfigItem(position = 4, keyName = "targetFillColor", name = "Fill Color",
+			description = "Color of the creature highlight fill", section = targetSection)
+	default Color targetFillColor() { return new Color(0, 255, 255, 20); }
+
+	@ConfigItem(position = 5, keyName = "targetBorderWidth", name = "Border Width",
+			description = "Width of the creature highlight border", section = targetSection)
+	default double targetBorderWidth() { return 2; }
+
+	@ConfigItem(position = 6, keyName = "targetOutlineFeather", name = "Outline feather",
+			description = "Specify between 0-4 how much of the model outline should be faded",
+			section = targetSection)
+	@Range(min = 0, max = 4)
+	default int targetOutlineFeather() { return 0; }
+
+	@ConfigItem(
+			keyName = "infoBoxTimeoutMinutes",
+			name = "Hide infobox after (minutes)",
+			description = "Hide the rumour infobox after this many minutes without Hunter XP. 0 = never",
+			position = 10
+	)
+	@Range(min = 0, max = 240)
+	default int infoBoxTimeoutMinutes() {
+		return 10;
+	}
 }
